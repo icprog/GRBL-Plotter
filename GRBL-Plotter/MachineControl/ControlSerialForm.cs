@@ -303,7 +303,7 @@ namespace GRBL_Plotter
             btnGRBLCommand2.Enabled = isConnected & !isSensing;
             btnGRBLCommand3.Enabled = isConnected & !isSensing;
             btnGRBLCommand4.Enabled = isConnected & !isSensing;
-            btnCheckGRBL.Enabled = isConnected & !isSensing;
+            btnCheckGRBL.Enabled = isConnected & !isSensing & !isGrblVers0;
             btnGRBLReset.Enabled = isConnected;// & !isSensing;
         }
 

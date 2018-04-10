@@ -201,14 +201,18 @@ namespace GRBL_Plotter
             gcodeLines++;
         }
 
-        public static void PenDown(StringBuilder gcodeString, string cmt = "")
-        {   if (gcodeComments) { gcodeString.Append("\r\n"); }
+        public static void PenDown(StringBuilder gcodeString, string cmto = "")
+        {
+            string cmt = cmto;
+            if (gcodeComments) { gcodeString.Append("\r\n"); }
             if (gcodeRelative) { cmt += string.Format("rel {0}", lastz); }
             if (cmt.Length >0) { cmt = string.Format("({0})", cmt); }
 
+            applyXYFeedRate = true;     // apply XY Feed Rate after each PenDown command (not just after Z-axis)
+
             if (gcodeSpindleToggle)
             {   if (gcodeComments) gcodeString.AppendFormat("({0})\r\n", "Pen down: Spindle-On");
-                SpindleOn(gcodeString, cmt);
+                SpindleOn(gcodeString, cmto);
             }
             if (gcodeZApply)
             {   if (gcodeComments) gcodeString.AppendFormat("({0})\r\n", "Pen down: Z-Axis");
@@ -220,7 +224,7 @@ namespace GRBL_Plotter
 
                 gcodeTime += Math.Abs((gcodeZUp - gcodeZDown) / gcodeZFeed);
                 gcodeLines++; lastg = 1; lastf = gcodeZFeed;
-                applyXYFeedRate = true;
+//                applyXYFeedRate = true;
                 lastz = gcodeZDown;
             }
             if (gcodePWMEnable)
@@ -242,8 +246,10 @@ namespace GRBL_Plotter
             gcodeDownUp++;
         }
 
-        public static void PenUp(StringBuilder gcodeString, string cmt = "")
-        {   if (gcodeComments) { gcodeString.Append("\r\n"); }
+        public static void PenUp(StringBuilder gcodeString, string cmto = "")
+        {
+            string cmt = cmto;
+            if (gcodeComments) { gcodeString.Append("\r\n"); }
             if (gcodeRelative) { cmt += string.Format("rel {0}", lastz); }
             if (cmt.Length >0) { cmt = string.Format("({0})", cmt); }
 
@@ -278,7 +284,7 @@ namespace GRBL_Plotter
 
             if (gcodeSpindleToggle)
             {   if (gcodeComments) gcodeString.AppendFormat("({0})\r\n", "Pen up: Spindle-Off");
-                SpindleOff(gcodeString, cmt);
+                SpindleOff(gcodeString, cmto);
             }
             if (gcodeComments) gcodeString.Append("\r\n");
         }
@@ -502,7 +508,9 @@ namespace GRBL_Plotter
             header += string.Format("( G-Code lines: {0} )\r\n", gcodeLines);
             header += string.Format("( Pen Down/Up : {0} times )\r\n", gcodeDownUp);
             header += string.Format("( Path length : {0:0.0} units )\r\n", gcodeDistance);
-            header += string.Format("( Duration    : {0:0.0} min. )\r\n", gcodeTime);
+            header += string.Format("( Duration ca.: {0:0.0} min. )\r\n", gcodeTime);
+            header += string.Format("( Setup : {0} )\r\n", gcodeLines);
+
             if (gcodeToolChange)
             {
                 header += string.Format("( Tool changes: {0})\r\n", gcodeToolCounter);

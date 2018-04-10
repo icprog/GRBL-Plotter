@@ -226,6 +226,7 @@ namespace GRBL_Plotter
 
             svgToolIndex = svgPalette.init();
 
+            countSubPath = 0;
             startFirstElement = true;
             gcodeScale = 1;
             currentX = 0; currentY = 0;
